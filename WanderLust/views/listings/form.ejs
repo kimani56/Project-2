@@ -1,0 +1,267 @@
+<% layout("/layouts/boilerplate") %>
+
+<body class="min-h-screen bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#0d0d0d] text-white relative">
+  <style>
+    /* Fix dropdown and file input visibility */
+    select[name="category"] option {
+      background-color: #374151;
+      color: #ffffff;
+      padding: 8px;
+    }
+    
+    select[name="category"]:focus {
+      outline: 2px solid #f97316 !important;
+      outline-offset: 2px;
+    }
+  </style>
+
+  <!-- Back Button -->
+  <a href="/listings"
+    class="absolute top-4 left-4 z-50 text-gray-300 font-medium hover:text-purple-400 transition-all bg-white/5 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md border border-white/10 text-sm sm:text-base">
+    ← Back to Listings
+  </a>
+
+  <!-- Centering Container -->
+  <div class="flex items-center justify-center min-h-screen p-4 sm:p-6">
+    <!-- Glassmorphism Card -->
+    <div style="border: 1px solid rgb(163, 160, 160); border-radius: 10px;"
+      class="backdrop-blur-2xl bg-white/5 border border-white/10 shadow-xl rounded-3xl p-6 sm:p-10 w-full max-w-md sm:max-w-2xl">
+      <h1
+        class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-6 sm:mb-8 tracking-wide text-purple-400">
+        🛎️ Add a New Hotel
+      </h1>
+
+      <!-- Bootstrap Validation Form -->
+      <form action="/listings" enctype="multipart/form-data" method="post" class="needs-validation space-y-4 sm:space-y-5" novalidate>
+        <div>
+          <label class="form-label text-gray-300 font-medium mb-1">Title</label>
+          <input type="text" name="title" placeholder="e.g., Ocean View Resort" required
+            class="form-control bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:bg-white/10 focus:text-white focus:placeholder-gray-400" />
+          <div class="invalid-feedback">Please enter a hotel title</div>
+        </div>
+
+        <div>
+          <label class="form-label text-gray-300 font-medium mb-1">Description</label>
+          <input type="text" name="description" placeholder="Brief about the hotel..." required
+            class="form-control bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:bg-white/10 focus:text-white focus:placeholder-gray-400" />
+          <div class="invalid-feedback">Please enter a description</div>
+        </div>
+
+        <div>
+          <label class="form-label text-gray-300 font-medium mb-1">Upload Images (Main + up to 3 additional)</label>
+          <input 
+            type="file" 
+            id="imageInput"
+            name="images" 
+            multiple 
+            accept="image/*" 
+            class="form-control bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:bg-white/10 focus:text-white focus:placeholder-gray-400" 
+          />
+          <small style="color: #888;">Select multiple images: first will be main, others as gallery. Max 4 images.</small>
+          
+          <!-- Selected Files Display -->
+          <div id="fileList" style="margin-top: 1rem;">
+            <!-- Files will appear here -->
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-gray-300 font-medium">Location</label>
+            <input type="text" name="location" placeholder="City or Region" required
+              class="form-control bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:bg-white/10 focus:text-white focus:placeholder-gray-400" />
+            <div class="invalid-feedback">Please enter a location</div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-gray-300 font-medium">Country</label>
+            <input type="text" name="country" placeholder="Country" required
+              class="form-control bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:bg-white/10 focus:text-white focus:placeholder-gray-400" />
+            <div class="invalid-feedback">Please enter a country</div>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label text-gray-300 font-medium mb-1">Category</label>
+          <select name="category" class="form-control border border-white/20 rounded-xl focus:outline-none" required style="background-color: #374151; color: #ffffff; padding: 0.75rem; font-size: 1rem; appearance: none;">
+            <option value="Trending" selected style="background-color: #1f2937; color: #ffffff;">Trending</option>
+            <option value="Rooms" style="background-color: #1f2937; color: #ffffff;">Rooms</option>
+            <option value="Iconic Cities" style="background-color: #1f2937; color: #ffffff;">Iconic Cities</option>
+            <option value="Mountains" style="background-color: #1f2937; color: #ffffff;">Mountains</option>
+            <option value="Castles" style="background-color: #1f2937; color: #ffffff;">Castles</option>
+            <option value="Pools" style="background-color: #1f2937; color: #ffffff;">Pools</option>
+            <option value="Camping" style="background-color: #1f2937; color: #ffffff;">Camping</option>
+            <option value="Farms" style="background-color: #1f2937; color: #ffffff;">Farms</option>
+            <option value="Arctic" style="background-color: #1f2937; color: #ffffff;">Arctic</option>
+          </select>
+          <div class="invalid-feedback">Please select a category</div>
+        </div>
+
+        <div>
+          <label class="form-label text-gray-300 font-medium mb-1">Price (KES)</label>
+          <input type="number" name="price" placeholder="Per night price" required
+            class="form-control bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:bg-white/10 focus:text-white focus:placeholder-gray-400" />
+          <div class="invalid-feedback">Please enter a valid price</div>
+        </div>
+
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="termsCheck" required />
+          <label class="form-check-label" for="termsCheck">
+            Agree to <a href="#" id="termsLink" style="color: #38a169; text-decoration: underline; cursor: pointer;">terms and conditions</a>
+          </label>
+          <div class="invalid-feedback">
+            You must agree to the terms and conditions
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-xl text-lg font-semibold shadow-md hover:from-purple-700 hover:to-pink-600 transition-all">
+          ➕ Add Hotel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap Validation Script -->
+  <script>
+    (() => {
+      'use strict';
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+
+    // Terms and Conditions Modal
+    const termsLink = document.getElementById('termsLink');
+    
+    termsLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const modal = document.getElementById('termsModal');
+      modal.style.display = 'block';
+    });
+
+    const closeBtn = document.getElementsByClassName('close')[0];
+    const modal = document.getElementById('termsModal');
+    
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // File Selection Display Handler
+    const imageInput = document.getElementById('imageInput');
+    const fileList = document.getElementById('fileList');
+    let selectedFiles = [];
+
+    imageInput.addEventListener('change', (e) => {
+      selectedFiles = Array.from(e.target.files);
+      
+      if (selectedFiles.length > 4) {
+        alert('Maximum 4 images allowed. Only first 4 will be uploaded.');
+        selectedFiles = selectedFiles.slice(0, 4);
+        // Re-set the input to only contain the first 4 files
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        imageInput.files = dataTransfer.files;
+      }
+
+      displaySelectedFiles();
+    });
+
+    function displaySelectedFiles() {
+      fileList.innerHTML = '';
+
+      if (selectedFiles.length === 0) {
+        return;
+      }
+
+      const filesHTMLContainer = document.createElement('div');
+      filesHTMLContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 1rem;';
+
+      selectedFiles.forEach((file, index) => {
+        const fileCard = document.createElement('div');
+        fileCard.style.cssText = 'position: relative; border: 2px solid #38a169; border-radius: 8px; overflow: hidden; background: #2c2c2c;';
+        fileCard.id = `file-card-${index}`;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = document.createElement('img');
+          img.src = event.target.result;
+          img.style.cssText = 'width: 100%; height: 100px; object-fit: cover;';
+          
+          const labelDiv = document.createElement('div');
+          labelDiv.style.cssText = 'background: #1f2937; padding: 6px; text-align: center; font-size: 12px; color: #fff;';
+          labelDiv.textContent = index === 0 ? '📷 Main' : `📸 #${index + 1}`;
+          
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.innerHTML = '✕';
+          removeBtn.style.cssText = 'position: absolute; top: 0; right: 0; background: #c62828; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 10;';
+          removeBtn.onclick = (e) => {
+            e.preventDefault();
+            // Remove file from array
+            selectedFiles.splice(index, 1);
+            // Rebuild the file input
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            imageInput.files = dataTransfer.files;
+            // Re-display
+            displaySelectedFiles();
+          };
+
+          fileCard.appendChild(img);
+          fileCard.appendChild(labelDiv);
+          fileCard.appendChild(removeBtn);
+          filesHTMLContainer.appendChild(fileCard);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      fileList.appendChild(filesHTMLContainer);
+    }
+  </script>
+
+  <!-- Terms and Conditions Modal -->
+  <div id="termsModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+    <div style="background-color: #1e1e1e; margin: 10% auto; padding: 2rem; border-radius: 10px; border: 1px solid #444; width: 90%; max-width: 600px; color: #e0e0e0; max-height: 80vh; overflow-y: auto;">
+      <span class="close" style="color: #aaa; float: right; font-size: 2rem; font-weight: bold; cursor: pointer;">&times;</span>
+      <h2 style="color: #fff; margin-bottom: 1.5rem;">Terms and Conditions</h2>
+      
+      <h3 style="color: #38a169; margin-top: 1.5rem;">1. Property Listing</h3>
+      <p>As an admin, you are responsible for creating accurate and truthful property listings. You must ensure all information is current and legally compliant.</p>
+
+      <h3 style="color: #38a169; margin-top: 1.5rem;">2. Images and Media</h3>
+      <p>You guarantee that all images and media you upload are yours or you have the right to use them. You agree not to upload copyrighted content without permission.</p>
+
+      <h3 style="color: #38a169; margin-top: 1.5rem;">3. Pricing</h3>
+      <p>All prices must be in Kenyan Shillings (KES) and accurately reflect your property's value. You agree to fair pricing practices.</p>
+
+      <h3 style="color: #38a169; margin-top: 1.5rem;">4. Booking Management</h3>
+      <p>You agree to respond to booking requests promptly and fairly. Approval or rejection should be based on availability and reasonable criteria.</p>
+
+      <h3 style="color: #38a169; margin-top: 1.5rem;">5. Liability</h3>
+      <p>Urban Haven Housing is not responsible for disputes between property owners and guests. You agree to resolve issues professionally.</p>
+
+      <h3 style="color: #38a169; margin-top: 1.5rem;">6. Compliance</h3>
+      <p>You agree to comply with all applicable laws and regulations in your jurisdiction regarding property rentals and guest safety.</p>
+
+      <h3 style="color: #38a169; margin-top: 1.5rem;">7. Termination</h3>
+      <p>Urban Haven Housing reserves the right to remove listings or terminate accounts that violate these terms.</p>
+
+      <div style="margin-top: 2rem; text-align: center;">
+        <button onclick="document.getElementById('termsModal').style.display='none'" style="background-color: #38a169; color: white; padding: 10px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">I Understand</button>
+      </div>
+    </div>
+  </div>
+</body>

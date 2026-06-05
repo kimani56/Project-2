@@ -1,0 +1,116 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2 class="mb-4">📊 Your Activity Report</h2>
+
+      <!-- Summary Cards -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card bg-primary text-white">
+            <div class="card-body">
+              <h5 class="card-title">Listings Created</h5>
+              <h2><%= reportData.totalListings %></h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-success text-white">
+            <div class="card-body">
+              <h5 class="card-title">Reviews Written</h5>
+              <h2><%= reportData.totalReviews %></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card bg-info text-white">
+            <div class="card-body">
+              <h5 class="card-title">Average Rating Given</h5>
+              <h2><%= reportData.averageRating.toFixed(2) %> / 5</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-warning text-white">
+            <div class="card-body">
+              <h5 class="card-title">Latest Review</h5>
+              <p class="mb-0"><%= reportData.lastReviewDate ? new Date(reportData.lastReviewDate).toLocaleDateString() : 'N/A' %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Reviews Section -->
+      <div class="card">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Recent Reviews</h5>
+        </div>
+        <div class="card-body">
+          <% if (reportData.recentReviews && reportData.recentReviews.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% reportData.recentReviews.forEach(review => { %>
+                    <tr>
+                      <td><%= new Date(review.createdAt).toLocaleDateString() %></td>
+                      <td>
+                        <span class="badge bg-success">
+                          <%= review.rating %> ⭐
+                        </span>
+                      </td>
+                      <td>
+                        <%= review.comment ? review.comment.substring(0, 50) + (review.comment.length > 50 ? '...' : '') : 'No comment' %>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <p class="text-muted text-center">No reviews written yet.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Listings Section -->
+      <div class="card mt-4">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Your Listings</h5>
+        </div>
+        <div class="card-body">
+          <% if (reportData.userListings && reportData.userListings.length > 0) { %>
+            <div class="list-group">
+              <% reportData.userListings.forEach(listing => { %>
+                <a href="/listings/<%= listing._id %>" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1"><%= listing.title %></h6>
+                    <small class="text-muted">KES <%= listing.price %>/night</small>
+                  </div>
+                  <p class="mb-1"><%= listing.location %>, <%= listing.country %></p>
+                  <small class="text-muted"><%= listing.reviews ? listing.reviews.length : 0 %> reviews</small>
+                </a>
+              <% }); %>
+            </div>
+          <% } else { %>
+            <p class="text-muted text-center">You haven't created any listings yet.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <a href="/profile" class="btn btn-secondary">← Back to Profile</a>
+      </div>
+    </div>
+  </div>
+</div>

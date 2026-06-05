@@ -1,0 +1,74 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2 class="mb-4">📅 Book Your Stay</h2>
+
+      <!-- Listing Info Card -->
+      <div class="card mb-4">
+        <img src="<%= listing.image.url %>" alt="<%= listing.title %>" class="card-img-top" style="height: 300px; object-fit: cover;">
+        <div class="card-body">
+          <h5 class="card-title"><%= listing.title %></h5>
+          <p class="card-text"><%= listing.description %></p>
+          <p><strong>Location:</strong> <%= listing.location %>, <%= listing.country %></p>
+          <p><strong>Price per night:</strong> <span class="text-success">KES <%= listing.price.toLocaleString() %></span></p>
+        </div>
+      </div>
+
+      <!-- Booking Form -->
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Complete Your Booking</h5>
+        </div>
+        <div class="card-body">
+          <form action="/bookings" method="POST">
+            <input type="hidden" name="listingId" value="<%= listing._id %>">
+
+            <div class="mb-3">
+              <label class="form-label">Check-in Date</label>
+              <input type="date" name="checkInDate" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Check-out Date</label>
+              <input type="date" name="checkOutDate" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Number of Guests</label>
+              <input type="number" name="guests" class="form-control" min="1" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Coupon Code (Optional)</label>
+              <input type="text" name="couponCode" class="form-control" placeholder="Enter coupon code for discount">
+            </div>
+
+            <div class="alert alert-info">
+              <strong>Note:</strong> Your booking request will be submitted for admin approval. You'll receive confirmation once it's approved.
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg w-100">Submit Booking Request</button>
+            <a href="/listings/<%= listing._id %>" class="btn btn-secondary btn-lg w-100 mt-2">Cancel</a>
+          </form>
+        </div>
+      </div>
+
+      <!-- Booked Dates Info -->
+      <% if (bookings && bookings.length > 0) { %>
+        <div class="alert alert-warning mt-4">
+          <h6>Booked Dates:</h6>
+          <ul class="mb-0">
+            <% bookings.forEach(booking => { %>
+              <li>
+                <%= new Date(booking.checkInDate).toLocaleDateString() %> to
+                <%= new Date(booking.checkOutDate).toLocaleDateString() %>
+              </li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>

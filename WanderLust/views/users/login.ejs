@@ -1,0 +1,195 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Urban Haven Housing</title>
+  <link rel="icon" href="compass-solid.svg" type="image/x-icon">
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #121212; color: #e0e0e0; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;">
+
+  <div style="background: #1e1e1e; padding: 2rem 3rem; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.7); width: 360px;">
+    <!-- Flash messages -->
+    <div style="margin-bottom: 1rem;">
+      <% if (success && success.length > 0) { %>
+        <div id="flashji" style="background: #2e7d32; color: #c8facc; padding: 12px 16px; border-radius: 6px; font-weight: 700; margin-bottom: 1rem; box-shadow: 0 0 10px #2e7d32;">
+          ✅ <%= success[0] %>
+        </div>
+      <% } %>
+      <% if (error && error.length > 0) { %>
+        <div style="background: #c62828; color: #f9b4b4; padding: 12px 16px; border-radius: 6px; font-weight: 700; margin-bottom: 1rem; box-shadow: 0 0 10px #c62828;">
+          ❌ <%= error[0] %>
+        </div>
+      <% } %>
+    </div>
+
+    
+    <!-- Heading -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+      <img style="width: 56px; height: 56px; object-fit: contain;" src="compass-solid.svg" alt="WanderLust Logo">
+      <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: 1.2px; color: #fff; margin: 0;">
+        Login to Urban Haven Housing
+      </h1>
+    </div>
+    
+    <!-- Login form -->
+    <form action="/login" method="post" novalidate>
+      <div style="margin-bottom: 1.5rem;">
+        <label for="username" style="display: block; margin-bottom: 0.6rem; font-weight: 600; color: #bbb;">Username</label>
+        <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        style="width: 100%; padding: 10px 14px; background: #2c2c2c; border: 1.5px solid #444; border-radius: 8px; font-size: 1rem; color: #eee; transition: border-color 0.3s ease;"
+        onfocus="this.style.borderColor='#38a169'"
+        onblur="this.style.borderColor='#444'"
+        />
+      </div>
+      
+      <div style="margin-bottom: 2rem;">
+        <label for="password" style="display: block; margin-bottom: 0.6rem; font-weight: 600; color: #bbb;">Password</label>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          style="flex: 1; padding: 10px 14px; background: #2c2c2c; border: 1.5px solid #444; border-radius: 8px; font-size: 1rem; color: #eee; transition: border-color 0.3s ease;"
+          onfocus="this.style.borderColor='#38a169'"
+          onblur="this.style.borderColor='#444'"
+          />
+          <button 
+            type="button" 
+            id="togglePassword"
+            style="padding: 10px 12px; background: #2c2c2c; border: 1.5px solid #444; border-radius: 8px; color: #eee; cursor: pointer; font-size: 1rem; transition: border-color 0.3s ease;"
+            onmouseover="this.style.backgroundColor='#38a169'"
+            onmouseout="this.style.backgroundColor='#2c2c2c'"
+            onclick="togglePasswordVisibility(event)"
+          >
+            👁️
+          </button>
+        </div>
+      </div>
+      <div>
+        <p style="color: #bbb; font-size: 0.9rem; margin-bottom: 1rem;">
+          Don't have an account? <a href="/signup" style="color: #F8CC30; text-decoration: none; font-weight: 600;">Sign up</a>
+        </p>
+        <p style="color: #bbb; font-size: 0.9rem; margin-bottom: 1.5rem;">
+          Forgot password? <a href="#" id="forgotPasswordLink" style="color: #F8CC30; text-decoration: none; font-weight: 600;">Reset it here</a>
+        </p>
+      </div>
+
+      <button
+        type="submit"
+        style="width: 100%; background-color: #F8CC30; color: #121212; border: none; padding: 12px; font-size: 1.2rem; border-radius: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 5px 15px rgba(242, 255, 59, 0.6); transition: background-color 0.3s ease;"
+        onmouseover="this.style.backgroundColor='#e0b800'"
+        onmouseout="this.style.backgroundColor='#F8CC30'"
+      >
+        Login
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Toggle password visibility
+    function togglePasswordVisibility(event) {
+      event.preventDefault();
+      const passwordInput = document.getElementById("password");
+      const toggleBtn = document.getElementById("togglePassword");
+      
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleBtn.textContent = "🙈";
+      } else {
+        passwordInput.type = "password";
+        toggleBtn.textContent = "👁️";
+      }
+    }
+
+    const flash = document.getElementById("flashji");
+    if (flash) {
+      setTimeout(() => {
+        flash.style.display = "none";
+      }, 3500);
+    }
+
+    // Forgot Password Modal
+    const forgotPasswordLink = document.getElementById("forgotPasswordLink");
+    const modal = document.getElementById("forgotPasswordModal");
+    const closeBtn = document.getElementsByClassName("close-forgot")[0];
+    const resetForm = document.getElementById("resetForm");
+
+    forgotPasswordLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      modal.style.display = "block";
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    resetForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("resetEmail").value;
+      
+      try {
+        const response = await fetch("/forgot-password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert("✅ Reset link sent to your email! Check your inbox.");
+          modal.style.display = "none";
+          resetForm.reset();
+        } else {
+          alert("❌ " + (result.message || "Email not found"));
+        }
+      } catch (error) {
+        alert("❌ An error occurred. Please try again.");
+      }
+    });
+  </script>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+    <div style="background-color: #1e1e1e; margin: 20% auto; padding: 2rem 3rem; border-radius: 10px; border: 1px solid #444; width: 360px; color: #e0e0e0;">
+      <span class="close-forgot" style="color: #aaa; float: right; font-size: 2rem; font-weight: bold; cursor: pointer;">&times;</span>
+      <h2 style="color: #fff; margin-bottom: 1rem; margin-top: 0.5rem;">Reset Password</h2>
+      
+      <form id="resetForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div>
+          <label for="resetEmail" style="display: block; margin-bottom: 0.6rem; font-weight: 600; color: #bbb;">Enter your email address</label>
+          <input
+            type="email"
+            id="resetEmail"
+            name="email"
+            required
+            placeholder="your@email.com"
+            style="width: 100%; padding: 10px 14px; background: #2c2c2c; border: 1.5px solid #444; border-radius: 8px; font-size: 1rem; color: #eee; box-sizing: border-box;"
+          />
+          <small style="color: #888; margin-top: 0.5rem;">We'll send you a link to reset your password</small>
+        </div>
+
+        <button
+          type="submit"
+          style="background-color: #38a169; color: white; border: none; padding: 12px; font-size: 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease;"
+          onmouseover="this.style.backgroundColor='#2d8355'"
+          onmouseout="this.style.backgroundColor='#38a169'"
+        >
+          Send Reset Link
+        </button>
+      </form>
+    </div>
+  </div>
+</body>

@@ -1,0 +1,237 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  select[name="category"] option {
+    background-color: #374151;
+    color: #ffffff;
+    padding: 8px;
+  }
+</style>
+
+<div class="min-h-screen flex items-center justify-center px-4 py-8">
+  <div
+    class="bg-[#1e1e1e] border border-gray-700 shadow-xl rounded-2xl p-6 sm:p-8 max-w-4xl w-full flex flex-col sm:flex-row gap-6"
+  >
+    <div class="flex-1 flex flex-col space-y-4">
+      <h2 class="text-2xl font-semibold text-white text-center sm:text-left mb-4">
+        Edit Listing: <span class="text-yellow-400"><%= listing._id %></span>
+      </h2>
+
+      <form 
+        id="editForm" 
+        method="POST" 
+        action="/listings/<%= listing._id %>?_method=PUT" 
+        enctype="multipart/form-data"
+        novalidate 
+        class="flex flex-col space-y-4"
+      >
+        <% const fields = ["title", "description", "price", "location", "country"]; %>
+        <% fields.forEach(field => { %>
+          <div>
+            <input
+              type="text"
+              name="<%= field %>"
+              id="<%= field %>"
+              value="<%= listing[field] %>"
+              placeholder="<%= field.charAt(0).toUpperCase() + field.slice(1) %>"
+              required
+              class="p-3 w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-white/20 focus:outline-none"
+            />
+            <p class="text-red-500 text-sm mt-1 hidden">Please enter a valid <%= field %>.</p>
+          </div>
+        <% }) %>
+
+        <!-- Category Selection -->
+        <div>
+          <label for="category" class="block text-gray-300 mb-1">Category:</label>
+          <select
+            name="category"
+            id="category"
+            required
+            class="p-3 w-full rounded-md bg-gray-700 text-white border border-white/20 focus:outline-none"
+            style="color: white; background-color: #374151;"
+          >
+            <option value="Trending" <%= listing.category === "Trending" ? "selected" : "" %> style="background-color: #1f2937; color: white;">🔥 Trending</option>
+            <option value="Rooms" <%= listing.category === "Rooms" ? "selected" : "" %> style="background-color: #1f2937; color: white;">🛏️ Rooms</option>
+            <option value="Iconic Cities" <%= listing.category === "Iconic Cities" ? "selected" : "" %> style="background-color: #1f2937; color: white;">🏙️ Iconic Cities</option>
+            <option value="Mountains" <%= listing.category === "Mountains" ? "selected" : "" %> style="background-color: #1f2937; color: white;">⛰️ Mountains</option>
+            <option value="Castles" <%= listing.category === "Castles" ? "selected" : "" %> style="background-color: #1f2937; color: white;">🏰 Castles</option>
+            <option value="Pools" <%= listing.category === "Pools" ? "selected" : "" %> style="background-color: #1f2937; color: white;">🏊 Pools</option>
+            <option value="Camping" <%= listing.category === "Camping" ? "selected" : "" %> style="background-color: #1f2937; color: white;">⛺ Camping</option>
+            <option value="Farms" <%= listing.category === "Farms" ? "selected" : "" %> style="background-color: #1f2937; color: white;">🚜 Farms</option>
+            <option value="Arctic" <%= listing.category === "Arctic" ? "selected" : "" %> style="background-color: #1f2937; color: white;">❄️ Arctic</option>
+          </select>
+        </div>
+
+        <!-- Show current images gallery -->
+        <div>
+          <p class="text-gray-300 mb-2">Current Images:</p>
+          <div class="flex gap-2 flex-wrap">
+            <% if (listing.images && listing.images.length > 0) { %>
+              <% listing.images.forEach((img, idx) => { %>
+                <div class="relative">
+                  <img 
+                    src="<%= img.url %>" 
+                    alt="<%= listing.title %> image <%= idx + 1 %>" 
+                    class="w-24 h-24 object-cover rounded-md border border-gray-600"
+                  />
+                  <span class="absolute top-1 right-1 bg-yellow-400 text-black text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"><%= idx + 1 %></span>
+                </div>
+              <% }) %>
+            <% } else if (listing.image?.url) { %>
+              <img 
+                src="<%= listing.image.url %>" 
+                alt="<%= listing.title %>" 
+                class="w-24 h-24 object-cover rounded-md border border-gray-600"
+              />
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Upload new images -->
+        <div>
+          <label for="images" class="block text-gray-300 mb-1">Change Images (up to 4):</label>
+          <input
+            type="file"
+            name="images"
+            id="editImageInput"
+            accept="image/*"
+            multiple
+            class="block w-full text-white file:bg-yellow-400 file:text-black file:font-semibold file:px-4 file:py-2 file:rounded-lg"
+          />
+          <small style="color: #888;">Leave empty to keep current images</small>
+          
+          <!-- Selected Files Display -->
+          <div id="editFileList" style="margin-top: 1rem;">
+            <!-- New files will appear here -->
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-yellow-400 text-black font-semibold py-3 rounded-lg hover:bg-yellow-500 transition"
+        >
+          Update Listing
+        </button>
+      </form>
+
+
+      <a style="text-decoration: none;"
+        href="/listings"
+        class="mt-4 inline-block text-center text-yellow-400 hover:text-yellow-500 underline"
+      >
+        ← Back to Listings
+      </a>
+    </div>
+
+    <div class="flex-1 flex justify-center items-center">
+      <img
+        src="<%= listing.image.url %>"
+        alt="Listing Image"
+        class="rounded-lg max-h-80 object-cover border border-gray-600"
+      />
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('editForm');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    let valid = true;
+    const inputs = form.querySelectorAll('input[required]');
+
+    inputs.forEach(input => {
+      const error = input.nextElementSibling;
+
+      if (!input.value.trim()) {
+        input.classList.remove('border-white/20');
+        input.classList.add('border-red-500');
+        error.classList.remove('hidden');
+        valid = false;
+      } else {
+        input.classList.remove('border-red-500');
+        input.classList.add('border-green-500');
+        error.classList.add('hidden');
+      }
+    });
+
+    if (valid) {
+      form.submit(); // Actually submit if everything is valid
+    }
+  });
+
+  // File Selection Display Handler for Edit Form
+  const editImageInput = document.getElementById('editImageInput');
+  const editFileList = document.getElementById('editFileList');
+  let editSelectedFiles = [];
+
+  editImageInput.addEventListener('change', (e) => {
+    editSelectedFiles = Array.from(e.target.files);
+    
+    if (editSelectedFiles.length > 4) {
+      alert('Maximum 4 images allowed. Only first 4 will be uploaded.');
+      editSelectedFiles = editSelectedFiles.slice(0, 4);
+      // Re-set the input to only contain the first 4 files
+      const dataTransfer = new DataTransfer();
+      editSelectedFiles.forEach(file => dataTransfer.items.add(file));
+      editImageInput.files = dataTransfer.files;
+    }
+
+    displayEditSelectedFiles();
+  });
+
+  function displayEditSelectedFiles() {
+    editFileList.innerHTML = '';
+
+    if (editSelectedFiles.length === 0) {
+      return;
+    }
+
+    const filesHTMLContainer = document.createElement('div');
+    filesHTMLContainer.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 1rem;';
+
+    editSelectedFiles.forEach((file, index) => {
+      const fileCard = document.createElement('div');
+      fileCard.style.cssText = 'position: relative; border: 2px solid #38a169; border-radius: 8px; overflow: hidden; background: #2c2c2c;';
+      fileCard.id = `edit-file-card-${index}`;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = document.createElement('img');
+        img.src = event.target.result;
+        img.style.cssText = 'width: 100%; height: 100px; object-fit: cover;';
+        
+        const labelDiv = document.createElement('div');
+        labelDiv.style.cssText = 'background: #1f2937; padding: 6px; text-align: center; font-size: 12px; color: #fff;';
+        labelDiv.textContent = index === 0 ? '📷 Main' : `📸 #${index + 1}`;
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerHTML = '✕';
+        removeBtn.style.cssText = 'position: absolute; top: 0; right: 0; background: #c62828; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 10;';
+        removeBtn.onclick = (e) => {
+          e.preventDefault();
+          // Remove file from array
+          editSelectedFiles.splice(index, 1);
+          // Rebuild the file input
+          const dataTransfer = new DataTransfer();
+          editSelectedFiles.forEach(file => dataTransfer.items.add(file));
+          editImageInput.files = dataTransfer.files;
+          // Re-display
+          displayEditSelectedFiles();
+        };
+
+        fileCard.appendChild(img);
+        fileCard.appendChild(labelDiv);
+        fileCard.appendChild(removeBtn);
+        filesHTMLContainer.appendChild(fileCard);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    editFileList.appendChild(filesHTMLContainer);
+  }
+</script>

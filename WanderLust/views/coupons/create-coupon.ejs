@@ -1,0 +1,39 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="mb-4">🎟️ Create New Coupon</h2>
+
+      <div class="card">
+        <div class="card-body">
+          <form action="/coupons/admin/create-coupon" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Coupon Code</label>
+              <input type="text" name="code" class="form-control" placeholder="e.g., SAVE20" required>
+              <small class="text-muted">Must be unique (uppercase recommended)</small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Discount Percentage (%)</label>
+              <input type="number" name="discountPercent" class="form-control" min="1" max="100" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Max Uses (Leave empty for unlimited)</label>
+              <input type="number" name="maxUses" class="form-control" min="1">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Expiry Date (Leave empty for no expiry)</label>
+              <input type="date" name="expiryDate" class="form-control">
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg w-100">Create Coupon</button>
+            <a href="/coupons/admin/all-coupons" class="btn btn-secondary btn-lg w-100 mt-2">Cancel</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

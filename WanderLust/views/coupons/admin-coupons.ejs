@@ -1,0 +1,74 @@
+<%- layout('layouts/boilerplate') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <h2 class="mb-4">🎟️ Manage Coupons</h2>
+
+      <a href="/coupons/admin/create-coupon" class="btn btn-primary mb-3">➕ Create New Coupon</a>
+
+      <% if (coupons && coupons.length > 0) { %>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Code</th>
+                <th>Discount %</th>
+                <th>Max Uses</th>
+                <th>Times Used</th>
+                <th>Expiry Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% coupons.forEach(coupon => { %>
+                <tr>
+                  <td><strong><%= coupon.code %></strong></td>
+                  <td><span class="badge bg-success"><%= coupon.discountPercent %>%</span></td>
+                  <td><%= coupon.maxUses ? coupon.maxUses : "Unlimited" %></td>
+                  <td><%= coupon.timesUsed %></td>
+                  <td>
+                    <% if (coupon.expiryDate) { %>
+                      <%= new Date(coupon.expiryDate).toLocaleDateString() %>
+                      <% if (new Date(coupon.expiryDate) < new Date()) { %>
+                        <small class="badge bg-danger">EXPIRED</small>
+                      <% } %>
+                    <% } else { %>
+                      -
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (coupon.isActive) { %>
+                      <span class="badge bg-success">Active</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">Inactive</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <form action="/coupons/admin/toggle/<%= coupon._id %>" method="POST" style="display: inline;">
+                      <button type="submit" class="btn btn-sm <%= coupon.isActive ? 'btn-warning' : 'btn-info' %>">
+                        <%= coupon.isActive ? 'Deactivate' : 'Activate' %>
+                      </button>
+                    </form>
+                    <form action="/coupons/admin/delete/<%= coupon._id %>" method="POST" style="display: inline;">
+                      <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="alert alert-info">
+          <p>No coupons created yet.</p>
+        </div>
+      <% } %>
+
+      <div class="mt-4">
+        <a href="/profile" class="btn btn-secondary">← Back to Profile</a>
+      </div>
+    </div>
+  </div>
+</div>
